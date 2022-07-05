@@ -320,3 +320,9 @@ kubectl get services
 ```
 
 ## State 2 (Multiple Control Plane with HAproxy) :
+in this state we should have at least 7 VMs .
+1 VM for installing and configuring ansibe , haproxy , kubectl , NAT and DHCP server. we use from this vm as a gateway for all other nodes.  
+3 VMs for masters
+3 VMs for workers
+masters and workers have only 1 network interface and connected together in local network.
+gateway node has 2 network interface . first NIC (for example eth0) is in LAN and another NIC (for example eth1) have Public IP Address.
