@@ -306,7 +306,7 @@ kubectl get nodes
 >master    Ready    control-plane   2m36s   v1.24.2
 >worker1   Ready    <none>          47s     v1.24.2
 >worker2   Ready    <none>          47s     v1.24.2
->/pre>
+></pre>
 
 #### now we can deploy a project with k8s cluster.for example for nginx you can run these commands on master node:
 
@@ -318,3 +318,4 @@ kubectl expose deploy nginx --port 80 --target-port 80 --type NodePort
 ```ssh
 kubectl get services
 ```
+
