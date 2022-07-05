@@ -26,7 +26,9 @@ all of nodes should have root access with password.
 we will install ansible on master node so it should has ssh access to all of the worker nodes.
 before start you shoud edit hosts files and add these lines end of the
 #### edit hosts file with nano text editor
-><pre>nano /etc/hosts</pre>
+```ssh
+nano /etc/hosts</pre>
+```
 #### add these lines to end of file
 ><pre>192.168.1.3 master
 >
@@ -35,45 +37,55 @@ before start you shoud edit hosts files and add these lines end of the
 >192.168.1.5 worker2</pre>
 
 #### create ssh access from master node to workers
-><pre>ssh-keygen
+```ssh
+ssh-keygen
+```
 >
 >Enter
 >
 >Enter</pre>
 
 
-><pre>ssh-copy-id root@192.168.1.3
->
+```ssh 
+ssh-copy-id root@192.168.1.3
+```
 >yes
 >
 >type root password</pre>
 
 
-><pre>ssh-copy-id root@192.168.1.4
-
+```ssh
+ssh-copy-id root@192.168.1.4
+```
 >yes
 >
 >type root password</pre>
 >
 
-><pre>ssh-copy-id root@192.168.1.5
+```ssh
+ssh-copy-id root@192.168.1.5
+```
 >
 >yes
 >
 >type root password</pre>
 
 #### in this tutorial we will use from ansible and playbook so we need to install ansible on master node
-><pre>sudo apt update
->
->sudo apt-get install ansible</pre>
+```ssh
+sudo apt update
 
+sudo apt-get install ansible</pre>
+```ssh
 #### create directory in master node
-><pre>mkdir ~/kube-cluster
->
->cd ~/kube-cluster</pre>
+```ssh
+mkdir ~/kube-cluster
 
+cd ~/kube-cluster</pre>
+```
 #### create and open hosts file in this directory 
-><pre>nano ~/kube-cluster/hosts</pre>
+```ssh
+nano ~/kube-cluster/hosts
+```
 
 #### add these lines to hosts file:
 ><pre>[masters]
@@ -91,7 +103,9 @@ before start you shoud edit hosts files and add these lines end of the
 >ansible_python_interpreter=/usr/bin/python3</pre>
 
 #### now we should test to make sure that everything work perfect
-><pre>ansible i- hosts all -m ping -u root</pre>
+```ssh
+ansible i- hosts all -m ping -u root
+```
 #### now you should see this output in terminal:
 ><pre>master | SUCCESS => 
 >{
@@ -149,7 +163,9 @@ before start you shoud edit hosts files and add these lines end of the
 ></pre>
 
 #### run the playbook with this command:
-> <pre> ansible-playbook -i hosts ~/kube-cluster/initial.yml </pre>
+```ssh
+ansible-playbook -i hosts ~/kube-cluster/initial.yml
+```
 
 #### now we nead to install some dependencies in all of nodes so create a new file kube-dependencies.yml with this content:
  
@@ -199,7 +215,9 @@ before start you shoud edit hosts files and add these lines end of the
 >       force: yes</pre>
 
 #### run playnook with this command:
-> <pre> ansible-playbook -i hosts ~/kube-cluster/kube-dependencies.yml </pre>
+```ssh
+ansible-playbook -i hosts ~/kube-cluster/kube-dependencies.yml
+```
 
 #### we need to use from kubeadm to create pod network and initialize the cluster on master node so crate a new file master.yml with this content:
 
@@ -237,7 +255,9 @@ before start you shoud edit hosts files and add these lines end of the
 
 #### we use from flannel for networking in k8s . you can use from other solution such as Calico or ... .
 #### run playnook with this command:
-> <pre> ansible-playbook -i hosts ~/kube-cluster/master.yml </pre>
+```ssh
+ansible-playbook -i hosts ~/kube-cluster/master.yml
+```
 
 after that we need to prepare workers so create a new file workers.yml with this content:
 
@@ -264,12 +284,16 @@ after that we need to prepare workers so create a new file workers.yml with this
 >        creates: node_joined.txt</pre>
 
 #### run playnook with this command:
-> <pre> ansible-playbook -i hosts ~/kube-cluster/worker.yml </pre>
+```ssh
+ansible-playbook -i hosts ~/kube-cluster/worker.yml
+```
 
 # Test
-####now switch user to ubuntu in master node or login with ubuntu user:
+#### now switch user to ubuntu in master node or login with ubuntu user:
 
-> <pre>ssh ubuntu@192.168.1.3</pre>
+```ssh
+ssh ubuntu@192.168.1.3
+```
 
 #### then run kubectl to see status:
 
