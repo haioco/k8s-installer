@@ -27,7 +27,7 @@ we will install ansible on master node so it should has ssh access to all of the
 before start you shoud edit hosts files and add these lines end of the
 #### edit hosts file with nano text editor
 ```ssh
-nano /etc/hosts</pre>
+nano /etc/hosts
 ```
 #### add these lines to end of file
 ><pre>192.168.1.3 master
