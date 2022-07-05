@@ -91,7 +91,7 @@ before start you shoud edit hosts files and add these lines end of the
 >ansible_python_interpreter=/usr/bin/python3</pre>
 
 #### now we should test to make sure that everything work perfect
-><pre>ansible all -m ping -u root</pre>
+><pre>ansible i- hosts all -m ping -u root</pre>
 #### now you should see this output in terminal:
 ><pre>master | SUCCESS => 
 >{
@@ -115,7 +115,7 @@ before start you shoud edit hosts files and add these lines end of the
 >
 >}<\pre>
 
-#### we need to create a sudo user (passwordless) in all of node so create a new file **initial.yml** with this content:
+#### we need to create a sudo user (passwordless) in all of nodes so create a new file **initial.yml** with this content:
 
 ><pre>- hosts: all
 >
@@ -147,3 +147,6 @@ before start you shoud edit hosts files and add these lines end of the
 >      
 >        - ~/.ssh/id_rsa.pub
 ></pre>
+
+#### run playnook with this command:
+> <pre> ansible-playbook -i hosts ~/kube-cluster/initial.yml </pre>
