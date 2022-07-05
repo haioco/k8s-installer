@@ -1,16 +1,17 @@
 # k8s-installer
 
-state 1 :
+## state 1 :
 
-1 master node \n
+1 master node
+
 3 worker nodes
 
-## Requirment :
+### Requirment :
 
-### Software requirment :
+#### Software requirment :
 4 vm with ubuntu 18.04 or ubuntu 20.04
 
-### Hardware requirment :
+#### Hardware requirment :
 at least 2GB Memory and 2Core CPU with 20GB HDD
 
 in this tutorial we have 3 nodes that they have internet access and they have private ip address:
@@ -22,14 +23,14 @@ worker2 192.168.1.5
 all of nodes should have root access with password.
 we will install ansible on master node so it should has ssh access to all of the worker nodes.
 before start you shoud edit hosts files and add these lines end of the
-#edit hosts file with nano text editor
+#### edit hosts file with nano text editor
 nano /etc/hosts
-#add these lines to end of file
+#### add these lines to end of file
 192.168.1.3 master
 192.168.1.4 worker1
 192.168.1.5 worker2
 
-#create ssh access from master node to workers
+#### create ssh access from master node to workers
 ssh-keygen
 Enter
 Enter
@@ -44,18 +45,18 @@ ssh-copy-id root@192.168.1.5
 yes
 type root password
 
-#in this tutorial we will use from ansible and playbook so we need to install ansible on master node
+#### in this tutorial we will use from ansible and playbook so we need to install ansible on master node
 sudo apt update
 sudo apt-get install ansible
 
-#create directory in master node
+#### create directory in master node
 mkdir ~/kube-cluster
 cd ~/kube-cluster
 
-# create and open hosts file in this directory 
+#### create and open hosts file in this directory 
 nano ~/kube-cluster/hosts
 
-#add these lines to hosts file:
+#### add these lines to hosts file:
 [masters]
 master ansible_host=192.168.1.3 ansible_user=root 
 
@@ -66,9 +67,9 @@ worker2 ansible_host=192.168.1.5 ansible_user=root
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
 
-#now we should test to make sure that everything work perfect
+#### now we should test to make sure that everything work perfect
 ansible all -m ping -u root
-#now you should see this output in terminal:
+#### now you should see this output in terminal:
 master | SUCCESS => {
     "changed": false, 
     "ping": "pong"
