@@ -50,6 +50,7 @@ before start you shoud edit hosts files and add these lines end of the
 
 
 ><pre>ssh-copy-id root@192.168.1.4
+
 >yes
 >
 >type root password</pre>
@@ -92,7 +93,7 @@ before start you shoud edit hosts files and add these lines end of the
 #### now we should test to make sure that everything work perfect
 ><pre>ansible all -m ping -u root</pre>
 #### now you should see this output in terminal:
->master | SUCCESS => 
+><pre>master | SUCCESS => 
 >{
 >    "changed": false, 
 >    
@@ -112,11 +113,11 @@ before start you shoud edit hosts files and add these lines end of the
 >    
 >    "ping": "pong"
 >
->}
+>}<\pre>
 
 #### we need to create a sudo user (passwordless) in all of node so create a new file **initial.yml** with this content:
 
->- hosts: all
+><pre>- hosts: all
 >
 >  become: yes
 >  
@@ -145,4 +146,4 @@ before start you shoud edit hosts files and add these lines end of the
 >      with_file:
 >      
 >        - ~/.ssh/id_rsa.pub
->        
+></pre>
