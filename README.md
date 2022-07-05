@@ -16,11 +16,11 @@ at least 2GB Memory and 2Core CPU with 20GB HDD
 
 in this tutorial we have 3 nodes that they have internet access and they have private ip address:
 
-> master 192.168.1.3
+><pre> master 192.168.1.3
 > 
 > worker1 192.168.1.4
 > 
-> worker2 192.168.1.5
+> worker2 192.168.1.5</pre>
 
 all of nodes should have root access with password.
 we will install ansible on master node so it should has ssh access to all of the worker nodes.
