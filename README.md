@@ -122,12 +122,12 @@ before start you shoud edit hosts files and add these lines end of the
 >  
 >  tasks:
 >  
->    -- name: create the 'ubuntu' user
+>    - name: create the 'ubuntu' user
 >    
 >      user: name=ubuntu append=yes state=present createhome=yes shell=/bin/bash
 >      
 >
->    -- name: allow 'ubuntu' to have passwordless sudo
+>    - name: allow 'ubuntu' to have passwordless sudo
 >    
 >      lineinfile:
 >      
@@ -138,11 +138,11 @@ before start you shoud edit hosts files and add these lines end of the
 >        validate: 'visudo -cf %s'
 >        
 >
->    -- name: set up authorized keys for the ubuntu user
+>    - name: set up authorized keys for the ubuntu user
 >    
 >      authorized_key: user=ubuntu key="{{item}}"
 >      
 >      with_file:
 >      
->        -- ~/.ssh/id_rsa.pub
+>        - ~/.ssh/id_rsa.pub
 >        
