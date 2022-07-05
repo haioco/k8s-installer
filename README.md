@@ -148,7 +148,7 @@ before start you shoud edit hosts files and add these lines end of the
 >        - ~/.ssh/id_rsa.pub
 ></pre>
 
-#### run playnook with this command:
+#### run the playbook with this command:
 > <pre> ansible-playbook -i hosts ~/kube-cluster/initial.yml </pre>
 
 #### now we nead to install some dependencies in all of nodes so create a new file kube-dependencies.yml with this content:
@@ -236,3 +236,32 @@ before start you shoud edit hosts files and add these lines end of the
 >        creates: pod_network_setup.txt</pre>
 
 #### we use from flannel for networking in k8s . you can use from other solution such as Calico or ... .
+#### run playnook with this command:
+> <pre> ansible-playbook -i hosts ~/kube-cluster/master.yml </pre>
+
+after that we need to prepare workers so create a new file workers.yml with this content:
+
+><pre>- hosts: master
+>  become: yes
+>  gather_facts: false
+>  tasks:
+>    - name: get join command
+>      shell: kubeadm token create --print-join-command
+>      register: join_command_raw
+>
+>    - name: set join command
+>      set_fact:
+>        join_command: "{{ join_command_raw.stdout_lines[0] }}"
+>
+>
+>- hosts: workers
+>  become: yes
+>  tasks:
+>    - name: join cluster
+>      shell: "{{ hostvars['master'].join_command }} >> node_joined.txt"
+>      args:
+>        chdir: $HOME
+>        creates: node_joined.txt</pre>
+
+#### run playnook with this command:
+> <pre> ansible-playbook -i hosts ~/kube-cluster/worker.yml </pre>
