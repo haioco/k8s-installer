@@ -73,7 +73,7 @@ ssh-copy-id root@192.168.1.5
 ```ssh
 sudo apt update
 
-sudo apt-get install ansible</pre>
+sudo apt-get install ansible
 ```
 #### create directory in master node
 ```ssh
@@ -81,7 +81,7 @@ mkdir ~/kube-cluster
 
 cd ~/kube-cluster</pre>
 ```
-#### create and open hosts file in this directory 
+#### create and open hosts file in this directory as an ansible inventory host
 ```ssh
 nano ~/kube-cluster/hosts
 ```
@@ -101,9 +101,9 @@ nano ~/kube-cluster/hosts
 >
 >ansible_python_interpreter=/usr/bin/python3</pre>
 
-#### now we should test to make sure that everything work perfect
+#### now you can test it to make sure that everything work perfect!
 ```ssh
-ansible i- hosts all -m ping -u root
+ansible -i hosts all -m ping -u root
 ```
 #### now you should see this output in terminal:
 ><pre>master | SUCCESS => 
@@ -128,7 +128,7 @@ ansible i- hosts all -m ping -u root
 >
 >}<\pre>
 
-#### we need to create a sudo user (passwordless) in all of nodes so create a new file **initial.yml** with this content:
+#### we need to create a sudo user (passwordless) in all of nodes so create a new file initial.yml with this content:
 
 ><pre>- hosts: all
 >
@@ -213,7 +213,7 @@ ansible-playbook -i hosts ~/kube-cluster/initial.yml
 >       state: present
 >       force: yes</pre>
 
-#### run playnook with this command:
+#### run the playnook with this command:
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/kube-dependencies.yml
 ```
@@ -313,4 +313,8 @@ kubectl get nodes
 ```sh
 kubectl create deployment nginx --image=nginx
 kubectl expose deploy nginx --port 80 --target-port 80 --type NodePort
+```
+#### you can confirm that nginx is runnig on werkers with this command:
+```ssh
+kubectl get services
 ```
