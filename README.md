@@ -1,18 +1,18 @@
 # k8s-installer
 
-## state 1 :
+## state 1 (Single Control Plane) :
 
-1 master node 
+1 master node as a control palne
 
-3 worker nodes
+2 worker nodes
 
 ### Requirment :
 
 #### Software requirment :
-4 vms with ubuntu 18.04 or ubuntu 20.04
+3 vms with ubuntu 18.04 or ubuntu 20.04
 
 #### Hardware requirment :
-at least 2GB Memory and 2Core CPU with 20GB HDD
+at least 2GB Memory and 2Cores CPU with 20GB HDD
 
 in this tutorial we have 3 nodes that they have internet access and they have private ip address:
 
