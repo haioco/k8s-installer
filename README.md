@@ -265,3 +265,21 @@ after that we need to prepare workers so create a new file workers.yml with this
 
 #### run playnook with this command:
 > <pre> ansible-playbook -i hosts ~/kube-cluster/worker.yml </pre>
+
+# Test
+now switch user to ubuntu in master node and run this command:
+
+> <pre>ssh ubuntu@192.168.1.3</pre>
+
+then run kubectl to see status:
+
+> <pre> kubectl get nodes</pre>
+
+result should be as same as below:
+
+><pre>NAME      STATUS   ROLES           AGE     VERSION
+>master    Ready    control-plane   2m36s   v1.24.2
+>worker1   Ready    <none>          47s     v1.24.2
+>worker2   Ready    <none>          47s     v1.24.2
+>/pre>
+
