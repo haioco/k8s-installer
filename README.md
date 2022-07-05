@@ -92,18 +92,24 @@ before start you shoud edit hosts files and add these lines end of the
 #### now we should test to make sure that everything work perfect
 >ansible all -m ping -u root
 #### now you should see this output in terminal:
->master | SUCCESS => {
+>master | SUCCESS => 
+>{
 >    "changed": false, 
+>    
 >    "ping": "pong"
 >
 >}
->worker1 | SUCCESS => {
->    "changed": false, 
+>worker1 | SUCCESS => 
+>{
+>    "changed": false,
+>     
 >    "ping": "pong"
 >
 >}
->worker2 | SUCCESS => {
+>worker2 | SUCCESS => 
+>{
 >    "changed": false, 
+>    
 >    "ping": "pong"
 >
 >}
