@@ -323,21 +323,21 @@ kubectl get services
 
 in this state we should have at least 7 VMs .
 
-1 VM for installing and configuring ansibe , haproxy , kubectl , NAT and DHCP server. we use from this vm as a gateway for all other nodes.  
+1 VM for installing and configuring ansibe , haproxy , kubectl , NAT and DHCP server. we use from this vm as a "gateway" for all other nodes.  
 
-3 VMs for masters
+3 VMs for masters (the number of masters should be ODD for example 3,5,7 ...)
 
 3 VMs for workers
 
-masters and workers have only 1 network interface and connected together in local network.
+masters and workers have only 1 network interface and connected together in local network. 
 
-gateway node has 2 network interface . first NIC (for example eth0) is in local network and another NIC (for example eth1) have Public IP Address.
+"gateway" node has 2 network interface . first NIC (for example eth0) is in local network and another NIC (for example eth1) have Public IP Address.
 
-All of VMs should have Clean OS with unquie Mac Address .We suggest you to install OS from the lastest realease and use from ISO file and do not use from any templates .
+All of VMs should have Clean OS with unquie Mac Address .We suggest you to install OS from the lastest realease . use from ISO to install OS and do not use from any templates .
 
 In this case we use from ubuntu 20.04.
 
-Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.100 - eth1 : WAN IP ) - Hostname HA)
+Main VM (Haproxy , dhcp ,...) - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.100 - eth1 : WAN IP ) - Hostname ha)
 
 master1 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.150) - Hostname master1)
 
@@ -350,3 +350,5 @@ worker1 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192
 worker2 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.201) - Hostname worker2)
 
 worker3 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.202) - Hostname worker3)
+
+you can have any number of workers or masters at the begin of this state. ip addresses and dhcp config may be changed base on your situation.
