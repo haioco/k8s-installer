@@ -337,16 +337,16 @@ All of VMs should have Clean OS with unquie Mac Address .We suggest you to insta
 
 In this case we use from ubuntu 20.04.
 
-Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.100 - eth1 : Valid Ip) - Hostname HA)
+Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.100 - eth1 : WAN IP ) - Hostname HA)
 
-Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.150 - eth1 : Valid Ip) - Hostname master1)
+master1 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.150) - Hostname master1)
 
-Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.151 - eth1 : Valid Ip) - Hostname master2)
+master2 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.151) - Hostname master2)
 
-Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.152 - eth1 : Valid Ip) - Hostname master3)
+master3 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.152) - Hostname master3)
 
-Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.200 - eth1 : Valid Ip) - Hostname worker1)
+worker1 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.200) - Hostname worker1)
 
-Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.201 - eth1 : Valid Ip) - Hostname worker2)
+worker2 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.201) - Hostname worker2)
 
-Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.202 - eth1 : Valid Ip) - Hostname worker3)
+worker3 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.202) - Hostname worker3)
