@@ -333,6 +333,20 @@ masters and workers have only 1 network interface and connected together in loca
 
 gateway node has 2 network interface . first NIC (for example eth0) is in local network and another NIC (for example eth1) have Public IP Address.
 
-All of VMs should have Clean OS with unquie Mac Address .We suggest you to install OS from lastest realease and use from ISO file and do not use from template .
+All of VMs should have Clean OS with unquie Mac Address .We suggest you to install OS from the lastest realease and use from ISO file and do not use from any templates .
 
 In this case we use from ubuntu 20.04.
+
+Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.100 - eth1 : Valid Ip) - Hostname HA)
+
+Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.150 - eth1 : Valid Ip) - Hostname master1)
+
+Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.151 - eth1 : Valid Ip) - Hostname master2)
+
+Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.152 - eth1 : Valid Ip) - Hostname master3)
+
+Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.200 - eth1 : Valid Ip) - Hostname worker1)
+
+Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.201 - eth1 : Valid Ip) - Hostname worker2)
+
+Main VM (Haproxy , dhcp ,...) OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.202 - eth1 : Valid Ip) - Hostname worker3)
