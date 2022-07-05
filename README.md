@@ -5,12 +5,12 @@ state 1 :
 1 master node \n
 3 worker nodes
 
-Requirment :
+## Requirment :
 
-Software requirment :
+### Software requirment :
 4 vm with ubuntu 18.04 or ubuntu 20.04
 
-Hardware requirment :
+### Hardware requirment :
 at least 2GB Memory and 2Core CPU with 20GB HDD
 
 in this tutorial we have 3 nodes that they have internet access and they have private ip address:
