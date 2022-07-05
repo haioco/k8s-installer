@@ -267,7 +267,7 @@ after that we need to prepare workers so create a new file workers.yml with this
 > <pre> ansible-playbook -i hosts ~/kube-cluster/worker.yml </pre>
 
 # Test
-now switch user to ubuntu in master node and run this command:
+now switch user to ubuntu in master node or login with ubuntu user:
 
 > <pre>ssh ubuntu@192.168.1.3</pre>
 
@@ -283,3 +283,9 @@ result should be as same as below:
 >worker2   Ready    <none>          47s     v1.24.2
 >/pre>
 
+now we can deploy a project with k8s cluster.for example for nginx you can run these commands on master node:
+
+'''sh
+kubectl create deployment nginx --image=nginx
+kubectl expose deploy nginx --port 80 --target-port 80 --type NodePort
+'''
