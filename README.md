@@ -95,12 +95,15 @@ before start you shoud edit hosts files and add these lines end of the
 >master | SUCCESS => {
 >    "changed": false, 
 >    "ping": "pong"
+>
 >}
 >worker1 | SUCCESS => {
 >    "changed": false, 
 >    "ping": "pong"
+>
 >}
 >worker2 | SUCCESS => {
 >    "changed": false, 
 >    "ping": "pong"
+>
 >}
