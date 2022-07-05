@@ -273,7 +273,7 @@ after that we need to prepare workers so create a new file workers.yml with this
 
 #### then run kubectl to see status:
 
-> <pre> kubectl get nodes</pre>
+```sh kubectl get nodes```
 
 #### result should be as same as below:
 
