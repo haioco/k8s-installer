@@ -1,6 +1,6 @@
 # k8s-installer
 
-## state 1 (Single Control Plane) :
+## State 1 (Single Control Plane) :
 
 1 master node as a control palne
 
@@ -319,3 +319,4 @@ kubectl expose deploy nginx --port 80 --target-port 80 --type NodePort
 kubectl get services
 ```
 
+## State 2 (Multiple Control Plane with HAproxy) :
