@@ -26,56 +26,56 @@ all of nodes should have root access with password.
 we will install ansible on master node so it should has ssh access to all of the worker nodes.
 before start you shoud edit hosts files and add these lines end of the
 #### edit hosts file with nano text editor
->nano /etc/hosts
+><pre>nano /etc/hosts</pre>
 #### add these lines to end of file
->192.168.1.3 master
+><pre>192.168.1.3 master
 >
 >192.168.1.4 worker1
 >
->192.168.1.5 worker2
+>192.168.1.5 worker2</pre>
 
 #### create ssh access from master node to workers
->ssh-keygen
+><pre>ssh-keygen
 >
 >Enter
 >
->Enter
+>Enter</pre>
 
 
->ssh-copy-id root@192.168.1.3
+><pre>ssh-copy-id root@192.168.1.3
 >
 >yes
 >
->type root password
+>type root password</pre>
 
 
->ssh-copy-id root@192.168.1.4
+><pre>ssh-copy-id root@192.168.1.4
 >yes
 >
->type root password
+>type root password</pre>
 >
 
->ssh-copy-id root@192.168.1.5
+><pre>ssh-copy-id root@192.168.1.5
 >
 >yes
 >
->type root password
+>type root password</pre>
 
 #### in this tutorial we will use from ansible and playbook so we need to install ansible on master node
->sudo apt update
+><pre>sudo apt update
 >
->sudo apt-get install ansible
+>sudo apt-get install ansible</pre>
 
 #### create directory in master node
->mkdir ~/kube-cluster
+><pre>mkdir ~/kube-cluster
 >
->cd ~/kube-cluster
+>cd ~/kube-cluster</pre>
 
 #### create and open hosts file in this directory 
->nano ~/kube-cluster/hosts
+><pre>nano ~/kube-cluster/hosts</pre>
 
 #### add these lines to hosts file:
->[masters]
+><pre>[masters]
 >
 >master ansible_host=192.168.1.3 ansible_user=root
 >
@@ -87,10 +87,10 @@ before start you shoud edit hosts files and add these lines end of the
 >
 >[all:vars]
 >
->ansible_python_interpreter=/usr/bin/python3
+>ansible_python_interpreter=/usr/bin/python3</pre>
 
 #### now we should test to make sure that everything work perfect
->ansible all -m ping -u root
+><pre>ansible all -m ping -u root</pre>
 #### now you should see this output in terminal:
 >master | SUCCESS => 
 >{
