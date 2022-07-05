@@ -2,18 +2,13 @@
 
 ## state 1 :
 
-1 master node
-
-<<<<<<< HEAD
 1 master node 
-=======
->>>>>>> 04ad48e0444763f37f5852c81e2721c78cd73605
 3 worker nodes
 
 ### Requirment :
 
 #### Software requirment :
-4 vm with ubuntu 18.04 or ubuntu 20.04
+4 vms with ubuntu 18.04 or ubuntu 20.04
 
 #### Hardware requirment :
 at least 2GB Memory and 2Core CPU with 20GB HDD
