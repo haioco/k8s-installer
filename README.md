@@ -331,8 +331,8 @@ in this state we should have at least 7 VMs .
 
 masters and workers have only 1 network interface and connected together in local network.
 
-gateway node has 2 network interface . first NIC (for example eth0) is in LAN and another NIC (for example eth1) have Public IP Address.
+gateway node has 2 network interface . first NIC (for example eth0) is in local network and another NIC (for example eth1) have Public IP Address.
 
-All of VMs should have Clean OS with unquie Mac Address .We suggest you to install OS from lastest ISO file and do not use from template .
+All of VMs should have Clean OS with unquie Mac Address .We suggest you to install OS from lastest realease and use from ISO file and do not use from template .
 
 In this case we use from ubuntu 20.04.
