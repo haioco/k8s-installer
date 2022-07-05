@@ -151,8 +151,7 @@ before start you shoud edit hosts files and add these lines end of the
 #### run playnook with this command:
 > <pre> ansible-playbook -i hosts ~/kube-cluster/initial.yml </pre>
 
-#### now we nead to install some dependencies in all of nodes so create a new file kube-dependencies.yml
- with this content:
+#### now we nead to install some dependencies in all of nodes so create a new file kube-dependencies.yml with this content:
  
 ><pre> - hosts: all
 >  become: yes
@@ -198,3 +197,42 @@ before start you shoud edit hosts files and add these lines end of the
 >       name: kubectl=1.24.2-00
 >       state: present
 >       force: yes</pre>
+
+#### run playnook with this command:
+> <pre> ansible-playbook -i hosts ~/kube-cluster/kube-dependencies.yml </pre>
+
+#### we need to use from kubeadm to create pod network and initialize the cluster on master node so crate a new file master.yml with this content:
+
+><pre>- hosts: master
+>  become: yes
+>  tasks:
+>    - name: initialize the cluster
+>      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 >> cluster_initialized.txt
+>      args:
+>        chdir: $HOME
+>        creates: cluster_initialized.txt
+>
+>    - name: create .kube directory
+>      become: yes
+>      become_user: ubuntu
+>      file:
+>        path: $HOME/.kube
+>        state: directory
+>        mode: 0755
+>
+>    - name: copy admin.conf to user's kube config
+>      copy:
+>        src: /etc/kubernetes/admin.conf
+>        dest: /home/ubuntu/.kube/config
+>        remote_src: yes
+>        owner: ubuntu
+>
+>    - name: install Pod network
+>      become: yes
+>      become_user: ubuntu
+>      shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
+>      args:
+>        chdir: $HOME
+>        creates: pod_network_setup.txt</pre>
+
+#### we use from flannel for networking in k8s . you can use from other solution such as Calico or ... .
