@@ -150,3 +150,51 @@ before start you shoud edit hosts files and add these lines end of the
 
 #### run playnook with this command:
 > <pre> ansible-playbook -i hosts ~/kube-cluster/initial.yml </pre>
+
+#### now we nead to install some dependencies in all of nodes so create a new file kube-dependencies.yml
+ with this content:
+ 
+><pre> - hosts: all
+>  become: yes
+>  tasks:
+>   - name: install Docker
+>     apt:
+>       name: docker.io
+>       state: present
+>       update_cache: true
+>
+>   - name: install APT Transport HTTPS
+>     apt:
+>       name: apt-transport-https
+>       state: present
+>
+>   - name: add Kubernetes apt-key
+>     apt_key:
+>       url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+>       state: present
+>
+>   - name: add Kubernetes' APT repository
+>     apt_repository:
+>      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+>      state: present
+>      filename: 'kubernetes'
+>
+>   - name: install kubelet
+>     apt:
+>       name: kubelet=1.24.2-00
+>       state: present
+>       update_cache: true
+>
+>   - name: install kubeadm
+>     apt:
+>       name: kubeadm=1.24.2-00
+>       state: present
+>
+>- hosts: master
+>  become: yes
+>  tasks:
+>   - name: install kubectl
+>     apt:
+>       name: kubectl=1.24.2-00
+>       state: present
+>       force: yes</pre>
