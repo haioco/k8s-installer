@@ -17,7 +17,9 @@ at least 2GB Memory and 2Core CPU with 20GB HDD
 in this tutorial we have 3 nodes that they have internet access and they have private ip address:
 
 > master 192.168.1.3
+> 
 > worker1 192.168.1.4
+> 
 > worker2 192.168.1.5
 
 all of nodes should have root access with password.
@@ -27,13 +29,17 @@ before start you shoud edit hosts files and add these lines end of the
 >nano /etc/hosts
 #### add these lines to end of file
 >192.168.1.3 master
+>
 >192.168.1.4 worker1
+>
 >192.168.1.5 worker2
 
 #### create ssh access from master node to workers
-ssh-keygen
-Enter
-Enter
+>ssh-keygen
+>
+>Enter
+>
+>Enter
 
 ssh-copy-id root@192.168.1.3
 yes
