@@ -40,7 +40,7 @@ nano /etc/hosts</pre>
 ```ssh
 ssh-keygen
 ```
->
+><pre>
 >Enter
 >
 >Enter</pre>
@@ -49,7 +49,7 @@ ssh-keygen
 ```ssh 
 ssh-copy-id root@192.168.1.3
 ```
->yes
+><pre>yes
 >
 >type root password</pre>
 
@@ -57,15 +57,14 @@ ssh-copy-id root@192.168.1.3
 ```ssh
 ssh-copy-id root@192.168.1.4
 ```
->yes
+><pre>yes
 >
 >type root password</pre>
->
 
 ```ssh
 ssh-copy-id root@192.168.1.5
 ```
->
+><pre>
 >yes
 >
 >type root password</pre>
@@ -75,7 +74,7 @@ ssh-copy-id root@192.168.1.5
 sudo apt update
 
 sudo apt-get install ansible</pre>
-```ssh
+```
 #### create directory in master node
 ```ssh
 mkdir ~/kube-cluster
