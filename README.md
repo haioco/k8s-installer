@@ -16,7 +16,7 @@ at least 2GB Memory and 2Core CPU with 20GB HDD
 
 in this tutorial we have 3 nodes that they have internet access and they have private ip address:
 
-><pre> master 192.168.1.3
+><pre>master 192.168.1.3
 > 
 > worker1 192.168.1.4
 > 
@@ -122,12 +122,12 @@ before start you shoud edit hosts files and add these lines end of the
 >  
 >  tasks:
 >  
->    &ndash; name: create the 'ubuntu' user
+>    - name: create the 'ubuntu' user
 >    
 >      user: name=ubuntu append=yes state=present createhome=yes shell=/bin/bash
 >      
 >
->    &ndash; name: allow 'ubuntu' to have passwordless sudo
+>    - name: allow 'ubuntu' to have passwordless sudo
 >    
 >      lineinfile:
 >      
@@ -138,11 +138,11 @@ before start you shoud edit hosts files and add these lines end of the
 >        validate: 'visudo -cf %s'
 >        
 >
->    &ndash; name: set up authorized keys for the ubuntu user
+>    - name: set up authorized keys for the ubuntu user
 >    
 >      authorized_key: user=ubuntu key="{{item}}"
 >      
 >      with_file:
 >      
->        &ndash; ~/.ssh/id_rsa.pub
+>        - ~/.ssh/id_rsa.pub
 >        
