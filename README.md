@@ -113,4 +113,3 @@ before start you shoud edit hosts files and add these lines end of the
 >    "ping": "pong"
 >
 >}
-> Wrong Code is here please remove it 
