@@ -2,7 +2,7 @@
 
 ## State 1 (Single Control Plane) :
 
-1 master node as a control palne
+1 master node as a control plane
 
 2 worker nodes
 
