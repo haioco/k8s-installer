@@ -9,7 +9,7 @@
 ### Requirment :
 
 #### Software requirment :
-3 vms with ubuntu 18.04 or ubuntu 20.04
+3 VMs with Ubuntu 18.04 or ubuntu 20.04
 
 #### Hardware requirment :
 at least 2GB Memory and 2Cores CPU with 20GB HDD
@@ -24,7 +24,7 @@ in this tutorial we have 3 nodes that they have internet access and they have pr
 
 all of nodes should have root access with password.
 we will install ansible on master node so it should has ssh access to all of the worker nodes.
-before start you shoud edit hosts files and add these lines end of the
+before start you shoud edit hosts files and add these lines end of them
 #### edit hosts file with nano text editor
 ```ssh
 nano /etc/hosts
@@ -213,7 +213,7 @@ ansible-playbook -i hosts ~/kube-cluster/initial.yml
 >       state: present
 >       force: yes</pre>
 
-#### run the playnook with this command:
+#### run the playbook with this command:
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/kube-dependencies.yml
 ```
@@ -252,8 +252,8 @@ ansible-playbook -i hosts ~/kube-cluster/kube-dependencies.yml
 >        chdir: $HOME
 >        creates: pod_network_setup.txt</pre>
 
-#### we use from flannel for networking in k8s . you can use from other solution such as Calico or ... .
-#### run playnook with this command:
+#### we use from flannel for networking in k8s . you can use from other solution such as Calico or other third party network's drivers .
+#### run playbook with this command:
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/master.yml
 ```
@@ -282,7 +282,7 @@ after that we need to prepare workers so create a new file workers.yml with this
 >        chdir: $HOME
 >        creates: node_joined.txt</pre>
 
-#### run playnook with this command:
+#### run playbook with this command:
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/worker.yml
 ```
@@ -314,7 +314,7 @@ kubectl get nodes
 kubectl create deployment nginx --image=nginx
 kubectl expose deploy nginx --port 80 --target-port 80 --type NodePort
 ```
-#### you can confirm that nginx is runnig on werkers with this command:
+#### you can confirm that nginx is runnig on workers with this command:
 ```ssh
 kubectl get services
 ```
@@ -331,11 +331,11 @@ in this state we should have at least 7 VMs .
 
 masters and workers have only 1 network interface and connected together in local network. 
 
-"gateway" node has 2 network interface . first NIC (for example eth0) is in local network and another NIC (for example eth1) have Public IP Address.
+"gateway" node has 2 network interfaces . first NIC (for example eth0) is in local network and another NIC (for example eth1) have Public IP Address.
 
-All of VMs should have Clean OS with unquie Mac Address .We suggest you to install OS from the lastest realease . use from ISO to install OS and do not use from any templates .
+All of VMs should have Clean OS with unique Mac Address .We suggest you to install OS from the lastest realease . use from ISO to install OS and do not use from any templates .
 
-In this case we use from ubuntu 20.04.
+In this case we use ubuntu 20.04.
 
 Main VM (Haproxy , dhcp ,...) - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.100 - eth1 : WAN IP ) - Hostname ha)
 
