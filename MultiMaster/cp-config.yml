@@ -1,0 +1,30 @@
+- hosts: ha
+  become: yes
+  tasks:
+
+    - name: create .kube directory
+      become: yes
+      become_user: root
+      file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0755
+
+- hosts: master1
+  become: yes
+  tasks:
+    - name: Synchronization using rsync protocol (pull)
+      synchronize:
+        mode: pull
+        src:  /etc/kubernetes/admin.conf
+        dest: /root/.kube/config
+
+- hosts: ha
+  become: yes
+  tasks:
+
+    - name: Change kubeconfig file permission
+      file:
+        path: $HOME/.kube/config 
+        owner: root
+        group: root

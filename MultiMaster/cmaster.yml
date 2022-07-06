@@ -1,12 +1,26 @@
 - hosts: master1
   become: yes
+  gather_facts: false
   tasks:
-    - name: initialize the cluster
-      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --control-plane-endpoint 192.168.1.100:6443 --upload-certs >> cluster_initialized.txt
+    - name: get join command
+      shell: sed -n '72p;73p;74p' < cluster_initialized.txt | sed 's/\\//g'  | tr '\n' ' ' 
+      register: join_command_raw
+
+    - name: set join command
+      set_fact:
+        join_command: "{{ join_command_raw.stdout_lines[0] }}"
+
+
+- hosts: cmasters
+  become: yes
+  tasks:
+    - name: join cluster
+      shell: "{{ hostvars['master1'].join_command }} >> cnode_joined.txt"
       args:
         chdir: $HOME
-        creates: cluster_initialized.txt
-
+        creates: cnode_joined.txt
+      tags:
+        - always
     - name: create .kube directory
       become: yes
       become_user: ubuntu
