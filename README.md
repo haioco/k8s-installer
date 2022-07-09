@@ -13,7 +13,9 @@ at least 2GB Memory and 2Cores CPU with 20GB HDD
 ### clone the latest version of project:
 
 ```ssh
+cd ~
 git clone https://github.com/haioco/k8s-installer.git
+cd k8s-installer/SingleMaster/
 ```
 #### edit hosts files in k8s-installer/SingleMaster then to initialize VMs run the the initial playbook with this command:
 
@@ -61,9 +63,10 @@ kubectl get nodes
 
 3 VMs for workers
 
-#### to initialize VMs run the the initial playbook with this command:
+#### edit hosts files in k8s-installer/MultiMaster then to to initialize VMs run the the initial playbook with this command:
 
 ```ssh
+cd ~/k8s-installer/MultiMaster/
 ansible-playbook -i hosts ~/k8s-installer/MultiMaster/initial.yml
 ```
 #### to install dependencies on all of nodes run the kube-dependencies playbook with this command:
