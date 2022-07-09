@@ -45,9 +45,10 @@ kubectl get nodes
 >worker2   Ready    <none>          47s     v1.24.2
 ></pre>
 <hr>
+
 ## State 2 (Multiple Control Plane with HAproxy) :
 
-###in this state we should have at least 7 VMs .
+### in this state we should have at least 7 VMs .
 
 #### 1 VM for installing and configuring ansibe , haproxy , kubectl , NAT and DHCP server. we use from this vm as a "gateway" for all other nodes.
 
