@@ -865,5 +865,5 @@ kubectl get services
 ####  you can confirm that new nodes are in cluster with this command:
 
 ```ssh
-kubectl get services
+kubectl get nodes
 ```        
