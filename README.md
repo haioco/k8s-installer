@@ -10,24 +10,29 @@
 #### Hardware requirment :
 at least 2GB Memory and 2Cores CPU with 20GB HDD
 
-#### to initialize VMs run the the initial playbook with this command:
+### clone the latest version of project:
 
 ```ssh
-ansible-playbook -i hosts ~/kube-cluster/initial.yml
+git clone https://github.com/haioco/k8s-installer.git
+```
+#### edit hosts files in k8s-installer/SingleMaster then to initialize VMs run the the initial playbook with this command:
+
+```ssh
+ansible-playbook -i hosts ~/k8s-installer/SingleMaster/initial.yml
 ```
 #### to install dependencies on all of nodes run the kube-dependencies playbook with this command:
 ```ssh
-ansible-playbook -i hosts ~/kube-cluster/kube-dependencies.yml
+ansible-playbook -i hosts ~/k8s-installer/SingleMaster/kube-dependencies.yml
 ```
 #### we use from flannel for networking in k8s . you can use from other solution such as Calico or other third party network's drivers .
 #### to prepare master node run master playbook with this command:
 ```ssh
-ansible-playbook -i hosts ~/kube-cluster/master.yml
+ansible-playbook -i hosts ~/k8s-installer/SingleMaster/master.yml
 ```
 
 #### to join worker nodes to cluster run playbook with this command:
 ```ssh
-ansible-playbook -i hosts ~/kube-cluster/workers.yml
+ansible-playbook -i hosts ~/k8s-installer/SingleMaster/workers.yml
 ```
 # Test
 #### now switch user to ubuntu user in master node or login with ubuntu user:
@@ -59,34 +64,34 @@ kubectl get nodes
 #### to initialize VMs run the the initial playbook with this command:
 
 ```ssh
-ansible-playbook -i hosts ~/kube-cluster/initial.yml
+ansible-playbook -i hosts ~/k8s-installer/MultiMaster/initial.yml
 ```
 #### to install dependencies on all of nodes run the kube-dependencies playbook with this command:
 
 ```ssh
-ansible-playbook -i hosts  --limit '!ha' ~/kube-cluster/kube-dependencies.yml
+ansible-playbook -i hosts  --limit '!ha' ~/k8s-installer/MultiMaster/kube-dependencies.yml
 ```
 #### we use from flannel for networking in k8s . you can use from other solution such as Calico or other third party network's drivers .
 #### to prepare master1 node run master playbook with this command:
 
 ```ssh
-ansible-playbook -i hosts ~/kube-cluster/master.yml
+ansible-playbook -i hosts ~/k8s-installer/MultiMaster/master.yml
 ```
 
 #### to join other masters nodes to cluster run the playbook:
 ```ssh
-ansible-playbook -i hosts ~/kube-cluster/cmaster.yml
+ansible-playbook -i hosts ~/k8s-installer/MultiMaster/cmaster.yml
 ```  
 #### to join worker nodes to cluster run playbook with this command:
        
 ```ssh
-ansible-playbook -i hosts ~/kube-cluster/workers.yml
+ansible-playbook -i hosts ~/k8s-installer/MultiMaster/workers.yml
 ```
 #### in this scenario we use from ha node to manage cluster.
 #### to copy cluster config file to ha node run cp-config playbook with this command:
        
 ```ssh
-ansible-playbook -i hosts ~/kube-cluster/cp-config.yml
+ansible-playbook -i hosts ~/k8s-installer/MultiMaster/cp-config.yml
 ```
 #### install lastest version of kubectl on ha node:
      
