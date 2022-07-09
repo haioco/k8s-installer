@@ -3,7 +3,9 @@
 ## State 1 (Single Control Plane) :
 
 >master 192.168.1.3
+>
 >worker1 192.168.1.4
+>
 >worker2 192.168.1.5
 
 ### Requirments :
@@ -57,12 +59,19 @@ kubectl get nodes
 <hr>
 
 ## State 2 (Multiple Control Plane with HAproxy) :
+
 >192.168.1.100 ha
+>
 >192.168.1.101 master1
+>
 >192.168.1.102 master2
+>
 >192.168.1.103 master3
+>
 >192.168.1.104 worker1
+>
 >192.168.1.105 worker2
+>
 >192.168.1.106 worker3
 
 #### Software requirments :
