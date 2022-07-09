@@ -80,8 +80,8 @@ nano ~/kube-cluster/hosts
 >worker1 ansible_host=192.168.1.4 ansible_user=root
 >worker2 ansible_host=192.168.1.5 ansible_user=root
 >[all:vars]
->
->ansible_python_interpreter=/usr/bin/python3</pre>
+>ansible_python_interpreter=/usr/bin/python3
+></pre>
 #### now you can test it to make sure that everything work perfect!
 ```ssh
 ansible -i hosts all -m ping -u root
@@ -110,128 +110,142 @@ ansible -i hosts all -m ping -u root
 >}
 ></pre>
 #### we need to create a sudo user (passwordless) in all of nodes so create a new file initial.yml with this content:
+```ssh
+- hosts: all
+  become: yes
+  tasks:
+    - name: create the 'ubuntu' user
+      user: name=ubuntu append=yes state=present createhome=yes shell=/bin/bash
 
-<pre>
->- hosts: all
->  become: yes
->  tasks:
->    - name: create the 'ubuntu' user
->      user: name=ubuntu append=yes state=present createhome=yes shell=/bin/bash
->    - name: allow 'ubuntu' to have passwordless sudo
->      lineinfile:
->        dest: /etc/sudoers
->        line: 'ubuntu ALL=(ALL) NOPASSWD: ALL'
->        validate: 'visudo -cf %s'
->    - name: set up authorized keys for the ubuntu user
->      authorized_key: user=ubuntu key="{{item}}"
->      with_file:
->        - ~/.ssh/id_rsa.pub
-></pre>
+    - name: allow 'ubuntu' to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        line: 'ubuntu ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
 
+    - name: set up authorized keys for the ubuntu user
+      authorized_key: user=ubuntu key="{{item}}"
+      with_file:
+        - ~/.ssh/id_rsa.pub
+```
 #### run the playbook with this command:
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/initial.yml
 ```
 #### now we nead to install some dependencies in all of nodes so create a new file kube-dependencies.yml with this content:
-><pre>- hosts: all
->  become: yes
->  tasks:
->   - name: install Docker
->     apt:
->       name: docker.io
->       state: present
->       update_cache: true
->   - name: install APT Transport HTTPS
->     apt:
->       name: apt-transport-https
->       state: present
->   - name: add Kubernetes apt-key
->     apt_key:
->       url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
->       state: present
->   - name: add Kubernetes' APT repository
->     apt_repository:
->      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
->      state: present
->      filename: 'kubernetes'
->   - name: install kubelet
->     apt:
->       name: kubelet=1.24.2-00
->       state: present
->       update_cache: true
->   - name: install kubeadm
->     apt:
->       name: kubeadm=1.24.2-00
->       state: present
->- hosts: master
->  become: yes
->  tasks:
->   - name: install kubectl
->     apt:
->       name: kubectl=1.24.2-00
->       state: present
->       force: yes
-></pre>
+```ssh
+- hosts: all
+  become: yes
+  tasks:
+   - name: install Docker
+     apt:
+       name: docker.io
+       state: present
+       update_cache: true
+
+   - name: install APT Transport HTTPS
+     apt:
+       name: apt-transport-https
+       state: present
+
+   - name: add Kubernetes apt-key
+     apt_key:
+       url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+       state: present
+
+   - name: add Kubernetes' APT repository
+     apt_repository:
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+      filename: 'kubernetes'
+
+   - name: install kubelet
+     apt:
+       name: kubelet=1.24.2-00
+       state: present
+       update_cache: true
+
+   - name: install kubeadm
+     apt:
+       name: kubeadm=1.24.2-00
+       state: present
+
+- hosts: master
+  become: yes
+  tasks:
+   - name: install kubectl
+     apt:
+       name: kubectl=1.24.2-00
+       state: present
+       force: yes
+```
 #### run the playbook with this command:
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/kube-dependencies.yml
 ```
 #### we need to use from kubeadm to create pod network and initialize the cluster on master node so crate a new file master.yml with this content:
-><pre>- hosts: master
->  become: yes
->  tasks:
->    - name: initialize the cluster
->      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 >> cluster_initialized.txt
->      args:
->        chdir: $HOME
->        creates: cluster_initialized.txt
->    - name: create .kube directory
->      become: yes
->      become_user: ubuntu
->      file:
->        path: $HOME/.kube
->        state: directory
->        mode: 0755
->    - name: copy admin.conf to user's kube config
->      copy:
->        src: /etc/kubernetes/admin.conf
->        dest: /home/ubuntu/.kube/config
->        remote_src: yes
->        owner: ubuntu
->    - name: install Pod network
->      become: yes
->      become_user: ubuntu
->      shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
->      args:
->        chdir: $HOME
->        creates: pod_network_setup.txt
-></pre>
+```ssh
+- hosts: master
+  become: yes
+  tasks:
+    - name: initialize the cluster
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 >> cluster_initialized.txt
+      args:
+        chdir: $HOME
+        creates: cluster_initialized.txt
+
+    - name: create .kube directory
+      become: yes
+      become_user: ubuntu
+      file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0755
+
+    - name: copy admin.conf to user's kube config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/ubuntu/.kube/config
+        remote_src: yes
+        owner: ubuntu
+
+    - name: install Pod network
+      become: yes
+      become_user: ubuntu
+      shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
+      args:
+        chdir: $HOME
+        creates: pod_network_setup.txt
+```        
 #### we use from flannel for networking in k8s . you can use from other solution such as Calico or other third party network's drivers .
 #### run playbook with this command:
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/master.yml
 ```
 after that we need to prepare workers so create a new file workers.yml with this content:
-><pre>- hosts: master
->  become: yes
->  gather_facts: false
->  tasks:
->    - name: get join command
->      shell: kubeadm token create --print-join-command
->      register: join_command_raw
->    - name: set join command
->      set_fact:
->        join_command: "{{ join_command_raw.stdout_lines[0] }}"
->- hosts: workers
->  become: yes
->  tasks:
->    - name: join cluster
->      shell: "{{ hostvars['master'].join_command }} >> node_joined.txt"
->      args:
->        chdir: $HOME
->        creates: node_joined.txt
-></pre>
+```ssh
+- hosts: master
+  become: yes
+  gather_facts: false
+  tasks:
+    - name: get join command
+      shell: kubeadm token create --print-join-command
+      register: join_command_raw
 
+    - name: set join command
+      set_fact:
+        join_command: "{{ join_command_raw.stdout_lines[0] }}"
+
+
+- hosts: workers
+  become: yes
+  tasks:
+    - name: join cluster
+      shell: "{{ hostvars['master'].join_command }} >> node_joined.txt"
+      args:
+        chdir: $HOME
+        creates: node_joined.txt
+```        
 #### run playbook with this command:
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/worker.yml
@@ -260,7 +274,6 @@ kubectl expose deploy nginx --port 80 --target-port 80 --type NodePort
 ```ssh
 kubectl get services
 ```
-
 ## State 2 (Multiple Control Plane with HAproxy) :
 
 in this state we should have at least 7 VMs .
@@ -546,101 +559,113 @@ ansible -i hosts all -m ping -u root
 >}
 ></pre>
 #### we need to create a sudo user (passwordless) in all of nodes so create a new file initial.yml with this content:
-><pre>- hosts: all
->  become: yes
->  tasks:
->    - name: create the 'ubuntu' user
->      user: name=ubuntu append=yes state=present createhome=yes shell=/bin/bash
->    - name: allow 'ubuntu' to have passwordless sudo
->      lineinfile:
->        dest: /etc/sudoers
->        line: 'ubuntu ALL=(ALL) NOPASSWD: ALL'
->        validate: 'visudo -cf %s'
->    - name: set up authorized keys for the ubuntu user
->      authorized_key: user=ubuntu key="{{item}}"
->      with_file:
->        - ~/.ssh/id_rsa.pub
-></pre>
+```ssh
+- hosts: all
+  become: yes
+  tasks:
+    - name: create the 'ubuntu' user
+      user: name=ubuntu append=yes state=present createhome=yes shell=/bin/bash
 
+    - name: allow 'ubuntu' to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        line: 'ubuntu ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: set up authorized keys for the ubuntu user
+      authorized_key: user=ubuntu key="{{item}}"
+      with_file:
+        - ~/.ssh/id_rsa.pu
+```      
 #### run the playbook with this command:
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/initial.yml
 ```
 #### now we nead to install some dependencies in all of nodes so create a new file kube-dependencies.yml with this content:
- 
-><pre>- hosts: all
->  become: yes
->  tasks:
->   - name: install Docker
->     apt:
->       name: docker.io
->       state: present
->       update_cache: true
->   - name: install APT Transport HTTPS
->     apt:
->       name: apt-transport-https
->       state: present
->   - name: add Kubernetes apt-key
->     apt_key:
->       url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
->       state: present
->   - name: add Kubernetes' APT repository
->     apt_repository:
->      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
->      state: present
->      filename: 'kubernetes'
->   - name: install kubelet
->     apt:
->       name: kubelet=1.24.2-00
->       state: present
->       update_cache: true
->   - name: install kubeadm
->     apt:
->       name: kubeadm=1.24.2-00
->       state: present
->- hosts: master
->  become: yes
->  tasks:
->   - name: install kubectl
->     apt:
->       name: kubectl=1.24.2-00
->       state: present
->       force: yes
-></pre>
+```ssh
+- hosts: all
+  become: yes
+  tasks:
+   - name: install Docker
+     apt:
+       name: docker.io
+       state: present
+       update_cache: true
+
+   - name: install APT Transport HTTPS
+     apt:
+       name: apt-transport-https
+       state: present
+
+   - name: add Kubernetes apt-key
+     apt_key:
+       url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+       state: present
+
+   - name: add Kubernetes' APT repository
+     apt_repository:
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+      filename: 'kubernetes'
+
+   - name: install kubelet
+     apt:
+       name: kubelet=1.24.2-00
+       state: present
+       update_cache: true
+
+   - name: install kubeadm
+     apt:
+       name: kubeadm=1.24.2-00
+       state: present
+
+- hosts: master1
+  become: yes
+  tasks:
+   - name: install kubectl
+     apt:
+       name: kubectl=1.24.2-00
+       state: present
+       force: yes
+```       
 #### run the playbook with this command:
 ```ssh
 ansible-playbook -i hosts  --limit '!ha' ~/kube-cluster/kube-dependencies.yml
 ```
 #### we need to use from kubeadm to create pod network and initialize the cluster on master1 node so crate a new file master.yml with this content:
-><pre>- hosts: master1
->  become: yes
->  tasks:
->    - name: initialize the cluster
->      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 >> cluster_initialized.txt
->      args:
->        chdir: $HOME
->        creates: cluster_initialized.txt
->    - name: create .kube directory
->      become: yes
->      become_user: ubuntu
->      file:
->        path: $HOME/.kube
->        state: directory
->        mode: 0755
->    - name: copy admin.conf to user's kube config
->      copy:
->        src: /etc/kubernetes/admin.conf
->        dest: /home/ubuntu/.kube/config
->        remote_src: yes
->        owner: ubuntu
->    - name: install Pod network
->      become: yes
->      become_user: ubuntu
->      shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
->      args:
->        chdir: $HOME
->        creates: pod_network_setup.txt
-></pre>
+```ssh
+- hosts: master1
+  become: yes
+  tasks:
+    - name: initialize the cluster
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --control-plane-endpoint 192.168.1.100:6443 --upload-certs >> cluster_initialized.txt
+      args:
+        chdir: $HOME
+        creates: cluster_initialized.txt
+
+    - name: create .kube directory
+      become: yes
+      become_user: ubuntu
+      file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0755
+
+    - name: copy admin.conf to user's kube config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/ubuntu/.kube/config
+        remote_src: yes
+        owner: ubuntu
+
+    - name: install Pod network
+      become: yes
+      become_user: ubuntu
+      shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
+      args:
+        chdir: $HOME
+        creates: pod_network_setup.txt
+```        
 #### we use from flannel for networking in k8s . you can use from other solution such as Calico or other third party network's drivers .
 #### run playbook with this command:
 ```ssh
@@ -656,100 +681,115 @@ you should see some thing like :
 >--control-plane
 >--certificate-key 72f3173ec788f270cf1751e49ac554e3629f79f9d28cde002932
 if not, open cluster_initialized.txt in master1 node in /root directory and check it to know these commands are in witch lines.then correct line 6 on cmaster.yml according result.
-><pre>- hosts: master1
->  become: yes
->  gather_facts: false
->  tasks:
->    - name: get join command
->      shell: sed -n '72p;73p;74p' < cluster_initialized.txt | sed 's/\\//g'  | tr '\n' ' '
->      register: join_command_raw
->    - name: set join command
->      set_fact:
->        join_command: "{{ join_command_raw.stdout_lines[0] }}"
->- hosts: cmasters
->  become: yes
->  tasks:
->    - name: join cluster
->      shell: "{{ hostvars['master1'].join_command }} >> cnode_joined.txt"
->      args:
->        chdir: $HOME
->        creates: cnode_joined.txt
->      tags:
->        - always
->    - name: create .kube directory
->      become: yes
->      become_user: ubuntu
->      file:
->        path: $HOME/.kube
->        state: directory
->        mode: 0755
->    - name: copy admin.conf to user's kube config
->      copy:
->        src: /etc/kubernetes/admin.conf
->        dest: /home/ubuntu/.kube/config
->        remote_src: yes
->        owner: ubuntu
->    - name: install Pod network
->      become: yes
->      become_user: ubuntu
->      shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml >> pod_netwo>
->      args:
->        chdir: $HOME
->        creates: pod_network_setup.txt</pre>
-after that we need to prepare workers so create a new file workers.yml with this content:
-><pre>- hosts: master1
->  become: yes
->  gather_facts: false
->  tasks:
->    - name: get join command
->      shell: kubeadm token create --print-join-command
->      register: join_command_raw
+```ssh
+- hosts: master1
+  become: yes
+  gather_facts: false
+  tasks:
+    - name: get join command
+      shell: sed -n '72p;73p;74p' < cluster_initialized.txt | sed 's/\\//g'  | tr '\n' ' ' 
+      register: join_command_raw
 
->    - name: set join command
->      set_fact:
->        join_command: "{{ join_command_raw.stdout_lines[0] }}"
->- hosts: workers
->  become: yes
->  tasks:
->    - name: join cluster
->      shell: "{{ hostvars['master1'].join_command }} >> node_joined.txt"
->      args:
->        chdir: $HOME
->        creates: node_joined.txt
-></pre>
+    - name: set join command
+      set_fact:
+        join_command: "{{ join_command_raw.stdout_lines[0] }}"
+
+
+- hosts: cmasters
+  become: yes
+  tasks:
+    - name: join cluster
+      shell: "{{ hostvars['master1'].join_command }} >> cnode_joined.txt"
+      args:
+        chdir: $HOME
+        creates: cnode_joined.txt
+      tags:
+        - always
+    - name: create .kube directory
+      become: yes
+      become_user: ubuntu
+      file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0755
+
+    - name: copy admin.conf to user's kube config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/ubuntu/.kube/config
+        remote_src: yes
+        owner: ubuntu
+
+    - name: install Pod network
+      become: yes
+      become_user: ubuntu
+      shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
+      args:
+        chdir: $HOME
+        creates: pod_network_setup.txt
+```       
+after that we need to prepare workers so create a new file workers.yml with this content:
+```ssh
+       - hosts: master1
+  become: yes
+  gather_facts: false
+  tasks:
+    - name: get join command
+      shell: kubeadm token create --print-join-command
+      register: join_command_raw
+
+    - name: set join command
+      set_fact:
+        join_command: "{{ join_command_raw.stdout_lines[0] }}"
+
+
+- hosts: workers
+  become: yes
+  tasks:
+    - name: join cluster
+      shell: "{{ hostvars['master1'].join_command }} >> node_joined.txt"
+      args:
+        chdir: $HOME
+        creates: node_joined.txt
+```       
 #### run playbook with this command:
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/worker.yml
 ```
 in this scenario we use from ha node to manage cluster to copy cluster config file to ha node:
 create file cp-config.yml with this content:
-><pre>- hosts: ha
->  become: yes
->  tasks:
->    - name: create .kube directory
->     become: yes
->     become_user: root
->      file:
->        path: $HOME/.kube
->        state: directory
->        mode: 0755
->- hosts: master1
->  become: yes
->  tasks:
->    - name: Synchronization using rsync protocol (pull)
->      synchronize:
->        mode: pull
->        src:  /etc/kubernetes/admin.conf
->        dest: /root/.kube/config
->- hosts: ha
->  become: yes
->  tasks:
->    - name: Change kubeconfig file permission
->      file:
->        path: $HOME/.kube/config
->        owner: root
->        group: root
-></pre>
+```ssh
+- hosts: ha
+  become: yes
+  tasks:
+
+    - name: create .kube directory
+      become: yes
+      become_user: root
+      file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0755
+
+- hosts: master1
+  become: yes
+  tasks:
+    - name: Synchronization using rsync protocol (pull)
+      synchronize:
+        mode: pull
+        src:  /etc/kubernetes/admin.conf
+        dest: /root/.kube/config
+
+- hosts: ha
+  become: yes
+  tasks:
+
+    - name: Change kubeconfig file permission
+      file:
+        path: $HOME/.kube/config 
+        owner: root
+        group: root
+```       
 then install lastest version of kubectl on ha node:
 ```ssh
 wget https://storage.googleapis.com/kubernetes-release/release/v1.24.2/bin/linux/amd64/kubectl
