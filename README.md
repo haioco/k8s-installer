@@ -2,12 +2,12 @@
 
 ## State 1 (Single Control Plane) :
 
-### Requirment :
+### Requirments :
 
-#### Software requirment :
+#### Software requirments :
 3 VMs with Ubuntu 18.04 or ubuntu 20.04
 
-#### Hardware requirment :
+#### Hardware requirments :
 at least 2GB Memory and 2Cores CPU with 20GB HDD
 
 ### clone the latest version of project:
@@ -54,13 +54,19 @@ kubectl get nodes
 
 ## State 2 (Multiple Control Plane with HAproxy) :
 
-### in this state we should have at least 7 VMs .
+#### Software requirments :
+
+in this state we should have at least 7 VMs .
 
 1 VM for installing and configuring ansibe , haproxy , kubectl , NAT and DHCP server. we use from this vm as a "gateway" for all other nodes.
 
 3 VMs for masters (the number of masters should be ODD for example 3,5,7 ...)
 
 3 VMs for workers
+
+#### Hardware requirments :
+
+at least 2GB Memory and 2Cores CPU with 20GB HDD
 
 ### clone the latest version of project:
 
