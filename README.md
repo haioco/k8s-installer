@@ -15,15 +15,15 @@
 at least 2GB Memory and 2Cores CPU with 20GB HDD
 
 in this tutorial we have 3 nodes that they have internet access and they have private ip address:
-
 ><pre>
 >master 192.168.1.3
 >worker1 192.168.1.4
 >worker2 192.168.1.5
 ></pre>
-
 all of nodes should have root access with password.
+
 we will install ansible on master node so it should has ssh access to all of the worker nodes.
+
 before start you shoud edit hosts files and add these lines end of them
 #### edit hosts file with nano text editor
 ```ssh
@@ -35,7 +35,6 @@ nano /etc/hosts
 >192.168.1.4 worker1
 >192.168.1.5 worker2
 ></pre>
-
 #### create ssh access from master node to workers
 ```ssh
 ssh-keygen
@@ -43,27 +42,23 @@ ssh-keygen
 ><pre>
 >Enter
 >Enter</pre>
-
 ```ssh 
 ssh-copy-id root@192.168.1.3
 ```
 ><pre>yes
->type root password</pre>
-
-
+>type root password
+></pre>
 ```ssh
 ssh-copy-id root@192.168.1.4
 ```
 ><pre>yes
 >type root password</pre>
-
 ```ssh
 ssh-copy-id root@192.168.1.5
 ```
 ><pre>
 >yes
 >type root password</pre>
-
 #### in this tutorial we will use from ansible and playbook so we need to install ansible on master node
 ```ssh
 sudo apt update
@@ -116,7 +111,8 @@ ansible -i hosts all -m ping -u root
 ></pre>
 #### we need to create a sudo user (passwordless) in all of nodes so create a new file initial.yml with this content:
 
-><pre>- hosts: all
+<pre>
+>- hosts: all
 >  become: yes
 >  tasks:
 >    - name: create the 'ubuntu' user
