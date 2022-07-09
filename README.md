@@ -481,7 +481,6 @@ ssh-keygen
 ```
 ><pre>
 >Enter
->
 >Enter</pre>
 
 
@@ -489,7 +488,6 @@ ssh-keygen
 ssh-copy-id root@192.168.1.100
 ```
 ><pre>yes
->
 >type root password</pre>
 
 
@@ -497,7 +495,6 @@ ssh-copy-id root@192.168.1.100
 ssh-copy-id root@192.168.1.101
 ```
 ><pre>yes
->
 >type root password</pre>
 
 
@@ -505,7 +502,6 @@ ssh-copy-id root@192.168.1.101
 ssh-copy-id root@192.168.1.102
 ```
 ><pre>yes
->
 >type root password</pre>
 
 
@@ -513,14 +509,11 @@ ssh-copy-id root@192.168.1.102
 ssh-copy-id root@192.168.1.103
 ```
 ><pre>yes
->
 >type root password</pre>
-
 ```ssh
 ssh-copy-id root@192.168.1.104
 ```
 ><pre>yes
->
 >type root password</pre>
 
 ```ssh 
@@ -535,10 +528,7 @@ ssh-copy-id root@192.168.1.106
 ```
 ><pre>
 >yes
->
 >type root password</pre>
-
-
 #### in this tutorial we will use from ansible and playbook so we need to install ansible on ha node
 ```ssh
 sudo apt update
@@ -610,11 +600,11 @@ ansible -i hosts all -m ping -u root
 >    "changed": false,
 >    "ping": "pong"
 >}
-<\pre>
+><\pre>
 
 #### we need to create a sudo user (passwordless) in all of nodes so create a new file initial.yml with this content:
 
-<pre>
+><pre>
 >- hosts: all
 >  become: yes
 >  tasks:
@@ -629,7 +619,7 @@ ansible -i hosts all -m ping -u root
 >      authorized_key: user=ubuntu key="{{item}}"
 >      with_file:
 >        - ~/.ssh/id_rsa.pub
-</pre>
+></pre>
 
 #### run the playbook with this command:
 ```ssh
@@ -637,7 +627,7 @@ ansible-playbook -i hosts ~/kube-cluster/initial.yml
 ```
 #### now we nead to install some dependencies in all of nodes so create a new file kube-dependencies.yml with this content:
  
-<pre>
+><pre>
 >- hosts: all
 >  become: yes
 >  tasks:
@@ -676,13 +666,13 @@ ansible-playbook -i hosts ~/kube-cluster/initial.yml
 >       name: kubectl=1.24.2-00
 >       state: present
 >       force: yes
-</pre>
+></pre>
 #### run the playbook with this command:
 ```ssh
 ansible-playbook -i hosts  --limit '!ha' ~/kube-cluster/kube-dependencies.yml
 ```
 #### we need to use from kubeadm to create pod network and initialize the cluster on master1 node so crate a new file master.yml with this content:
-<pre>
+><pre>
 >- hosts: master1
 >  become: yes
 >  tasks:
@@ -729,7 +719,7 @@ you should see some thing like :
 
 if not, open cluster_initialized.txt in master1 node in /root directory and check it to know these commands are in witch lines.then correct line 6 on cmaster.yml according result.
 
-<pre>
+><pre>
 >- hosts: master1
 >  become: yes
 >  gather_facts: false
@@ -771,7 +761,7 @@ if not, open cluster_initialized.txt in master1 node in /root directory and chec
 >        chdir: $HOME
 >        creates: pod_network_setup.txt</pre>
 after that we need to prepare workers so create a new file workers.yml with this content:
-<pre>
+><pre>
 >- hosts: master1
 >  become: yes
 >  gather_facts: false
@@ -790,14 +780,15 @@ after that we need to prepare workers so create a new file workers.yml with this
 >      shell: "{{ hostvars['master1'].join_command }} >> node_joined.txt"
 >      args:
 >        chdir: $HOME
->        creates: node_joined.txt</pre>
+>        creates: node_joined.txt
+></pre>
 #### run playbook with this command:
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/worker.yml
 ```
 in this scenario we use from ha node to manage cluster to copy cluster config file to ha node:
 create file cp-config.yml with this content:
-<pre>
+><pre>
 >hosts: ha
 >  become: yes
 >  tasks:
@@ -824,7 +815,7 @@ create file cp-config.yml with this content:
 >        path: $HOME/.kube/config
 >        owner: root
 >        group: root
-</pre>
+></pre>
 then install lastest version of kubectl on ha node:
 ```ssh
 wget https://storage.googleapis.com/kubernetes-release/release/v1.24.2/bin/linux/amd64/kubectl
@@ -837,7 +828,7 @@ kubectl get nodes
 ```
 
 #### result should be as same as below:
-
+><pre>
 >NAME      STATUS   ROLES           AGE     VERSION
 >master1   Ready    control-plane   1h   v1.24.2
 >master2   Ready    control-plane   1h   v1.24.2
@@ -845,6 +836,7 @@ kubectl get nodes
 >worker1   Ready    <none>          1h   v1.24.2
 >worker2   Ready    <none>          1h   v1.24.2
 >worker3   Ready    <none>          1h   v1.24.2
+></pre>
 
 #### now we can deploy a project with k8s cluster.for example for nginx you can run these commands on master node:
 ```sh
