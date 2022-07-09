@@ -334,17 +334,11 @@ All of VMs should have Clean OS with unique Mac Address.We suggest you to instal
 In this case we use ubuntu 20.04.
 
 Main VM (Haproxy , dhcp ,...) - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.100 - eth1 : WAN IP ) - Hostname ha)
-
 master1 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.101) - Hostname master1)
-
 master2 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.102) - Hostname master2)
-
 master3 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.103) - Hostname master3)
-
 worker1 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.104) - Hostname worker1)
-
 worker2 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.105) - Hostname worker2)
-
 worker3 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.106) - Hostname worker3)
 
 you can have any number of workers or masters at the begin of this state. ip addresses and dhcp config may be changed base on your situation.
@@ -590,37 +584,37 @@ ansible -i hosts all -m ping -u root
 ```
 #### now you should see this output in terminal:
 ><pre>master4 | SUCCESS => {
-    "changed": false,
-    "ping": "pong"
-}
-master3 | SUCCESS => {
-    "changed": false,
-    "ping": "pong"
-}
-master2 | SUCCESS => {
-    "changed": false,
-    "ping": "pong"
-}
-master1 | SUCCESS => {
-    "changed": false,
-    "ping": "pong"
-worker1 | SUCCESS => {
-    "changed": false,
-    "ping": "pong"
-}
-worker2 | SUCCESS => {
-    "changed": false,
-    "ping": "pong"
-}
-worker3 | SUCCESS => {
-    "changed": false,
-    "ping": "pong"
-}
+>    "changed": false,
+>    "ping": "pong"
+>}
+>master3 | SUCCESS => {
+>    "changed": false,
+>    "ping": "pong"
+>}
+>master2 | SUCCESS => {
+>    "changed": false,
+>    "ping": "pong"
+>}
+>master1 | SUCCESS => {
+>    "changed": false,
+>    "ping": "pong"
+>worker1 | SUCCESS => {
+>    "changed": false,
+>    "ping": "pong"
+>}
+>worker2 | SUCCESS => {
+>    "changed": false,
+>    "ping": "pong"
+>}
+>worker3 | SUCCESS => {
+>    "changed": false,
+>    "ping": "pong"
+>}
 <\pre>
 
 #### we need to create a sudo user (passwordless) in all of nodes so create a new file initial.yml with this content:
 
-><pre>
+<pre>
 >- hosts: all
 >  become: yes
 >  tasks:
@@ -681,7 +675,8 @@ ansible-playbook -i hosts ~/kube-cluster/initial.yml
 >     apt:
 >       name: kubectl=1.24.2-00
 >       state: present
->       force: yes</pre>
+>       force: yes
+</pre>
 #### run the playbook with this command:
 ```ssh
 ansible-playbook -i hosts  --limit '!ha' ~/kube-cluster/kube-dependencies.yml
