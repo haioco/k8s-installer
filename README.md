@@ -276,44 +276,46 @@ kubectl get services
 ```
 ## State 2 (Multiple Control Plane with HAproxy) :
 
-in this state we should have at least 7 VMs .
+###in this state we should have at least 7 VMs .
 
-1 VM for installing and configuring ansibe , haproxy , kubectl , NAT and DHCP server. we use from this vm as a "gateway" for all other nodes.
+#### 1 VM for installing and configuring ansibe , haproxy , kubectl , NAT and DHCP server. we use from this vm as a "gateway" for all other nodes.
 
-3 VMs for masters (the number of masters should be ODD for example 3,5,7 ...)
+#### 3 VMs for masters (the number of masters should be ODD for example 3,5,7 ...)
 
-3 VMs for workers
+#### 3 VMs for workers
 
 ### masters and workers have only 1 network interface and connected together in local network. 
 
-"gateway" node has 2 network interfaces.first NIC (for example eth0) is in local network and another NIC (for example eth1) have Public IP Address.
+### "gateway" node has 2 network interfaces.first NIC (for example eth0) is in local network and another NIC (for example eth1) have Public IP Address.
 
-All of VMs should have Clean OS with unique Mac Address.We suggest you to install OS from the lastest realease.please use from ISO to install OS and do not use from any templates.master and worker nodes do not have direct access to internet and access to internet via  ha node so you can permit or deny them with accept or deny their incoming traffic with iptables rules.
+#### All of VMs should have Clean OS with unique Mac Address.We suggest you to install OS from the lastest realease.please use from ISO to install OS and do not use from any templates.master and worker nodes do not have direct access to internet and access to internet via  ha node so you can permit or deny them with accept or deny their incoming traffic with iptables rules.
 
-In this case we use ubuntu 20.04.
+#### In this case we use ubuntu 20.04.
 
-Main VM (Haproxy , dhcp ,...) - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.100 - eth1 : WAN IP ) - Hostname ha)
+##### Main VM (Haproxy , dhcp ,...) - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.100 - eth1 : WAN IP ) - Hostname ha)
 
-master1 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.101) - Hostname master1)
+##### master1 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.101) - Hostname master1)
 
-master2 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.102) - Hostname master2)
+##### master2 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.102) - Hostname master2)
 
-master3 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.103) - Hostname master3)
+##### master3 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.103) - Hostname master3)
 
-worker1 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.104) - Hostname worker1)
+##### worker1 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.104) - Hostname worker1)
 
-worker2 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.105) - Hostname worker2)
+##### worker2 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.105) - Hostname worker2)
 
-worker3 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.106) - Hostname worker3)
+##### worker3 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.106) - Hostname worker3)
 
-you can have any number of workers or masters at the begin of this state. ip addresses and dhcp config may be changed base on your situation.
+#### you can have any number of workers or masters at the begin of this state. ip addresses and dhcp config may be changed base on your situation.
 
-first of all install and configure DHCP on ha node.
+#### first of all install and configure DHCP on ha node.
+
 ```sh
 apt-get install isc-dhcp-server
 nano /etc/dhcp/dhcpd.conf
 ```
-you can see a sample of dhcp config in below:
+#### you can see a sample of dhcp config in below:
+
 ```sh
 default-lease-time 600;
 max-lease-time 7200;
@@ -350,16 +352,19 @@ host worker3 {
 }
 }
 ```
-we recommended you to fix mac and ip address in dhcp config file to prevent any misconfiguration in later.
+#### we recommended you to fix mac and ip address in dhcp config file to prevent any misconfiguration in later.
+
 ```sh
 service isc-dhcp-server restart
 ```
-after that install and configure haproxy on ha node
+#### after that install and configure haproxy on ha node
+
 ```sh
 apt-get install haproxy
 nano /etc/haproxy/haproxy.cfg
 ```
-you can see a sample of dhcp config in below:
+#### you can see a sample of dhcp config in below:
+
 ```sh
 global
         log /dev/log    local0
@@ -405,13 +410,14 @@ server master1 192.168.1.101:6443 check fall 3 rise 2
 server master2 192.168.1.102:6443 check fall 3 rise 2
 server master3 192.168.1.103:6443 check fall 3 rise 2
 ```
-after save configuration restart ha proxy service:
+#### after save configuration restart ha proxy service:
+
 ```ssh
 service haproxy restart
 ```
-you need to have some changes in OS and configure iptables to use ha node as a packet forwarder.
+#### you need to have some changes in OS and configure iptables to use ha node as a packet forwarder.
 
-at first edit sysctl.conf file:
+#### at first edit sysctl.conf file:
 
 ```ssh
 echo 1 > /proc/sys/net/ipv4/ip_forward
