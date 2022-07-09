@@ -857,3 +857,13 @@ kubectl expose deploy nginx --port 80 --target-port 80 --type NodePort
 ```ssh
 kubectl get services
 ```
+
+#### if you want to add new worker to cluster you should add it to ansible's hosts file in workers section and /etc/hosts file and dhcp config file with mac address.after that you shoud run initial.yml and kube-dependencies.yml and workers.yml.
+
+#### if you want to add new masters to cluster you should add it to ansible's hosts file in masters and cmasters section and /etc/hosts file and dhcp config file with mac address and /etc/haproxy/haproxy.cfg file.after that you shoud run initial.yml and kube-dependencies.yml and cmasters.yml.
+
+####  you can confirm that new nodes are in cluster with this command:
+
+```ssh
+kubectl get services
+```        
