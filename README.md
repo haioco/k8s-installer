@@ -50,11 +50,11 @@ kubectl get nodes
 
 ### in this state we should have at least 7 VMs .
 
-#### 1 VM for installing and configuring ansibe , haproxy , kubectl , NAT and DHCP server. we use from this vm as a "gateway" for all other nodes.
+1 VM for installing and configuring ansibe , haproxy , kubectl , NAT and DHCP server. we use from this vm as a "gateway" for all other nodes.
 
-#### 3 VMs for masters (the number of masters should be ODD for example 3,5,7 ...)
+3 VMs for masters (the number of masters should be ODD for example 3,5,7 ...)
 
-#### 3 VMs for workers
+3 VMs for workers
 
 #### to initialize VMs run the the initial playbook with this command:
 
