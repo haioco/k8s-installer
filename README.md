@@ -65,9 +65,11 @@ kubectl get nodes
 
 ### clone the latest version of project:
 
+```ssh
 cd ~
 git clone https://github.com/haioco/k8s-installer.git
 cd k8s-installer/MultiMaster/
+```
 
 #### edit hosts files in k8s-installer/MultiMaster then to to initialize VMs run the the initial playbook with this command:
 
