@@ -63,10 +63,15 @@ kubectl get nodes
 
 3 VMs for workers
 
+### clone the latest version of project:
+
+cd ~
+git clone https://github.com/haioco/k8s-installer.git
+cd k8s-installer/MultiMaster/
+
 #### edit hosts files in k8s-installer/MultiMaster then to to initialize VMs run the the initial playbook with this command:
 
 ```ssh
-cd ~/k8s-installer/MultiMaster/
 ansible-playbook -i hosts ~/k8s-installer/MultiMaster/initial.yml
 ```
 #### to install dependencies on all of nodes run the kube-dependencies playbook with this command:
