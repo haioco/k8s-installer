@@ -125,3 +125,21 @@ kubectl get nodes
 >worker2   Ready    <none>          1h   v1.24.2
 >worker3   Ready    <none>          1h   v1.24.2
 ></pre>
+
+### haproxy config file should be as same as this:
+```ssh
+frontend kubernetes
+bind 192.168.1.100:6443
+option tcplog
+mode tcp
+default_backend kubernetes-master-nodes
+backend kubernetes-master-nodes
+mode tcp
+balance roundrobin
+option tcp-check
+server master1 192.168.1.101:6443 check fall 3 rise 2
+server master2 192.168.1.102:6443 check fall 3 rise 2
+server master3 192.168.1.103:6443 check fall 3 rise 2
+```
+
+# you can see full version of Doc on Wiki ...
