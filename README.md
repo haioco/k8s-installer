@@ -409,8 +409,10 @@ after save configuration restart ha proxy service:
 ```ssh
 service haproxy restart
 ```
-you need to have some changes in OS and configure iptables to use ha node as a packet forwarder:
+you need to have some changes in OS and configure iptables to use ha node as a packet forwarder.
+
 at first edit sysctl.conf file:
+
 ```ssh
 echo 1 > /proc/sys/net/ipv4/ip_forward
 sysctl -p /etc/sysctl.conf
@@ -433,6 +435,7 @@ nano /etc/hosts
 >192.168.1.105 worker2
 >192.168.1.106 worker3
 </pre>
+
 #### create ssh access from ha node to other nodes
 
 ```ssh
@@ -697,19 +700,19 @@ ansible-playbook -i hosts  --limit '!ha' ~/kube-cluster/kube-dependencies.yml
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/master.yml
 ```
-to join other master nodes to cluster run this command on master1 node:
+#### to join other master nodes to cluster run this command on master1 node:
 
 ```ssh
 sed -n '72p;73p;74p' < cluster_initialized.txt | sed 's/\\//g'  | tr '\n' ' '
 ```
-you should see some thing like :
+#### you should see some thing like :
 
 >kubeadm join 192.168.1.100:6443 --token 1r3ho0.3tnbrimzvu6uiwig
 >--discovery-token-ca-cert-hash sha256:93f2389d6617885a176d33467cdba91f7983cee5b2eb79be6fd8a27e25bccbc5
 >--control-plane
 >--certificate-key 72f3173ec788f270cf1751e49ac554e3629f79f9d28cde002932
 
-if not, open cluster_initialized.txt in master1 node in /root directory and check it to know these commands are in witch lines.then correct line 6 on cmaster.yml according result.
+#### if not, open cluster_initialized.txt in master1 node in /root directory and check it to know these commands are in witch lines.then correct line 6 on cmaster.yml according result.
 
 ```ssh
 - hosts: master1
@@ -754,7 +757,7 @@ if not, open cluster_initialized.txt in master1 node in /root directory and chec
         creates: pod_network_setup.txt
 ```
         
-after that we need to prepare workers so create a new file workers.yml with this content:
+#### after that we need to prepare workers so create a new file workers.yml with this content:
         
 ```ssh
        - hosts: master1
@@ -782,7 +785,7 @@ after that we need to prepare workers so create a new file workers.yml with this
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/worker.yml
 ```
-in this scenario we use from ha node to manage cluster to copy cluster config file to ha node:
+#### in this scenario we use from ha node to manage cluster to copy cluster config file to ha node:
 create file cp-config.yml with this content:
         
 ```ssh
@@ -814,7 +817,7 @@ create file cp-config.yml with this content:
         owner: root
         group: root
 ```       
-then install lastest version of kubectl on ha node:
+#### then install lastest version of kubectl on ha node:
         
 ```ssh
 wget https://storage.googleapis.com/kubernetes-release/release/v1.24.2/bin/linux/amd64/kubectl
