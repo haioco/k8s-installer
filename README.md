@@ -36,7 +36,6 @@ ansible-playbook -i hosts ~/k8s-installer/SingleMaster/master.yml
 ```ssh
 ansible-playbook -i hosts ~/k8s-installer/SingleMaster/workers.yml
 ```
-# Test
 #### now switch user to ubuntu user in master node or login with ubuntu user:
 ```ssh
 ssh ubuntu@192.168.1.3
