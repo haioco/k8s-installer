@@ -124,34 +124,20 @@ ansible -i hosts all -m ping -u root
 
 #### we need to create a sudo user (passwordless) in all of nodes so create a new file initial.yml with this content:
 
-><pre>- hosts: all
->
+><pre>
+>- hosts: all
 >  become: yes
->  
 >  tasks:
->  
 >    - name: create the 'ubuntu' user
->    
 >      user: name=ubuntu append=yes state=present createhome=yes shell=/bin/bash
->      
->
 >    - name: allow 'ubuntu' to have passwordless sudo
->    
 >      lineinfile:
->      
 >        dest: /etc/sudoers
->        
 >        line: 'ubuntu ALL=(ALL) NOPASSWD: ALL'
->        
 >        validate: 'visudo -cf %s'
->        
->
 >    - name: set up authorized keys for the ubuntu user
->    
 >      authorized_key: user=ubuntu key="{{item}}"
->      
 >      with_file:
->      
 >        - ~/.ssh/id_rsa.pub
 ></pre>
 
@@ -162,7 +148,8 @@ ansible-playbook -i hosts ~/kube-cluster/initial.yml
 
 #### now we nead to install some dependencies in all of nodes so create a new file kube-dependencies.yml with this content:
  
-><pre> - hosts: all
+><pre>
+>- hosts: all
 >  become: yes
 >  tasks:
 >   - name: install Docker
@@ -170,34 +157,28 @@ ansible-playbook -i hosts ~/kube-cluster/initial.yml
 >       name: docker.io
 >       state: present
 >       update_cache: true
->
 >   - name: install APT Transport HTTPS
 >     apt:
 >       name: apt-transport-https
 >       state: present
->
 >   - name: add Kubernetes apt-key
 >     apt_key:
 >       url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
 >       state: present
->
 >   - name: add Kubernetes' APT repository
 >     apt_repository:
 >      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
 >      state: present
 >      filename: 'kubernetes'
->
 >   - name: install kubelet
 >     apt:
 >       name: kubelet=1.24.2-00
 >       state: present
 >       update_cache: true
->
 >   - name: install kubeadm
 >     apt:
 >       name: kubeadm=1.24.2-00
 >       state: present
->
 >- hosts: master
 >  become: yes
 >  tasks:
@@ -211,10 +192,10 @@ ansible-playbook -i hosts ~/kube-cluster/initial.yml
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/kube-dependencies.yml
 ```
-
 #### we need to use from kubeadm to create pod network and initialize the cluster on master node so crate a new file master.yml with this content:
 
-><pre>- hosts: master
+><pre>
+>- hosts: master
 >  become: yes
 >  tasks:
 >    - name: initialize the cluster
@@ -222,7 +203,6 @@ ansible-playbook -i hosts ~/kube-cluster/kube-dependencies.yml
 >      args:
 >        chdir: $HOME
 >        creates: cluster_initialized.txt
->
 >    - name: create .kube directory
 >      become: yes
 >      become_user: ubuntu
@@ -244,7 +224,8 @@ ansible-playbook -i hosts ~/kube-cluster/kube-dependencies.yml
 >      shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
 >      args:
 >        chdir: $HOME
->        creates: pod_network_setup.txt</pre>
+>        creates: pod_network_setup.txt
+></pre>
 
 #### we use from flannel for networking in k8s . you can use from other solution such as Calico or other third party network's drivers .
 #### run playbook with this command:
@@ -254,7 +235,8 @@ ansible-playbook -i hosts ~/kube-cluster/master.yml
 
 after that we need to prepare workers so create a new file workers.yml with this content:
 
-><pre>- hosts: master
+><pre>
+>- hosts: master
 >  become: yes
 >  gather_facts: false
 >  tasks:
@@ -274,7 +256,8 @@ after that we need to prepare workers so create a new file workers.yml with this
 >      shell: "{{ hostvars['master'].join_command }} >> node_joined.txt"
 >      args:
 >        chdir: $HOME
->        creates: node_joined.txt</pre>
+>        creates: node_joined.txt
+></pre>
 
 #### run playbook with this command:
 ```ssh
@@ -401,11 +384,9 @@ global
         user haproxy
         group haproxy
         daemon
-
         # Default SSL material locations
         ca-base /etc/ssl/certs
         crt-base /etc/ssl/private
-
         # See: https://ssl-config.mozilla.org/#server=haproxy&server-version=2.0.3&config=intermediate
         ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AE>
         ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
@@ -431,7 +412,6 @@ bind 192.168.1.100:6443
 option tcplog
 mode tcp
 default_backend kubernetes-master-nodes
-
 backend kubernetes-master-nodes
 mode tcp
 balance roundrobin
@@ -461,7 +441,8 @@ iptables-save
 nano /etc/hosts
 ```
 #### add these lines to end of file
-><pre>PUBLIC_IP ha
+><pre>
+>PUBLIC_IP ha
 >192.168.1.101 master1
 >192.168.1.102 master2
 >192.168.1.103 master3
@@ -476,54 +457,73 @@ ssh-keygen
 ```
 ><pre>
 >Enter
->Enter</pre>
-
+>Enter
+></pre>
 
 ```ssh 
 ssh-copy-id root@192.168.1.100
 ```
-><pre>yes
->type root password</pre>
-
+><pre>
+>yes
+>type root password
+></pre>
 
 ```ssh 
 ssh-copy-id root@192.168.1.101
 ```
-><pre>yes
->type root password</pre>
+><pre>
+>yes
+>type root password
+></pre>
 
 
 ```ssh 
 ssh-copy-id root@192.168.1.102
 ```
-><pre>yes
->type root password</pre>
+
+><pre>
+>yes
+>type root password
+></pre>
 
 
 ```ssh 
 ssh-copy-id root@192.168.1.103
 ```
-><pre>yes
->type root password</pre>
+
+><pre>
+>yes
+>type root password
+></pre>
+
 ```ssh
 ssh-copy-id root@192.168.1.104
 ```
-><pre>yes
->type root password</pre>
+
+><pre>
+>yes
+>type root password
+></pre>
 
 ```ssh 
 ssh-copy-id root@192.168.1.105
 ```
-><pre>yes
+
+><pre>
+>yes
 >
->type root password</pre>
+>type root password
+></pre>
 
 ```ssh
 ssh-copy-id root@192.168.1.106
 ```
+
 ><pre>
 >yes
->type root password</pre>
+>type root password
+></pre>
+
 #### in this tutorial we will use from ansible and playbook so we need to install ansible on ha node
 ```ssh
 sudo apt update
@@ -533,8 +533,7 @@ sudo apt-get install ansible
 #### create directory in ha node
 ```ssh
 mkdir ~/kube-cluster
-
-cd ~/kube-cluster</pre>
+cd ~/kube-cluster
 ```
 #### create and open hosts file in this directory as an ansible inventory host
 ```ssh
@@ -568,7 +567,8 @@ ansible_python_interpreter=/usr/bin/python3
 ansible -i hosts all -m ping -u root
 ```
 #### now you should see this output in terminal:
-><pre>master4 | SUCCESS => {
+><pre>
+>master4 | SUCCESS => {
 >    "changed": false,
 >    "ping": "pong"
 >}
