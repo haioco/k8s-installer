@@ -761,7 +761,7 @@ kubeadm join 192.168.1.100:6443 --token 1r3ho0.3tnbrimzvu6uiwig
 
 if not, open cluster_initialized.txt in master1 node in /root directory and check it to know these commands are in witch lines.then correct line 6 on cmaster.yml according result.
 
->- hosts: master1
+><pre>- hosts: master1
 >  become: yes
 >  gather_facts: false
 >  tasks:
@@ -805,12 +805,12 @@ if not, open cluster_initialized.txt in master1 node in /root directory and chec
 >      shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml >> pod_netwo>
 >      args:
 >        chdir: $HOME
->        creates: pod_network_setup.txt
+>        creates: pod_network_setup.txt</pre>
 
 
 after that we need to prepare workers so create a new file workers.yml with this content:
 
-><pre>- hosts: master
+><pre>- hosts: master1
 >  become: yes
 >  gather_facts: false
 >  tasks:
@@ -827,7 +827,7 @@ after that we need to prepare workers so create a new file workers.yml with this
 >  become: yes
 >  tasks:
 >    - name: join cluster
->      shell: "{{ hostvars['master'].join_command }} >> node_joined.txt"
+>      shell: "{{ hostvars['master1'].join_command }} >> node_joined.txt"
 >      args:
 >        chdir: $HOME
 >        creates: node_joined.txt</pre>
@@ -836,14 +836,48 @@ after that we need to prepare workers so create a new file workers.yml with this
 ```ssh
 ansible-playbook -i hosts ~/kube-cluster/worker.yml
 ```
+in this scenario we use from ha node to manage cluster to copy cluster config file to ha node:
+create file cp-config.yml with this content:
 
-# Test
-#### now switch user to ubuntu in master node or login with ubuntu user:
+>hosts: ha
+>  become: yes
+>  tasks:
+>
+>    - name: create .kube directory
+>     become: yes
+>     become_user: root
+>      file:
+>        path: $HOME/.kube
+>        state: directory
+>        mode: 0755
+>
+>- hosts: master1
+>  become: yes
+>  tasks:
+>    - name: Synchronization using rsync protocol (pull)
+>      synchronize:
+>        mode: pull
+>        src:  /etc/kubernetes/admin.conf
+>        dest: /root/.kube/config
+>
+>- hosts: ha
+>  become: yes
+>  tasks:
+>
+>    - name: Change kubeconfig file permission
+>      file:
+>        path: $HOME/.kube/config
+>        owner: root
+>        group: root
+</pre>
+
+then install lastest version of kubectl on ha node:
 
 ```ssh
-ssh ubuntu@192.168.1.3
+wget https://storage.googleapis.com/kubernetes-release/release/v1.24.2/bin/linux/amd64/kubectl
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin
 ```
-
 #### then run kubectl to see status:
 
 ```sh
@@ -852,11 +886,14 @@ kubectl get nodes
 
 #### result should be as same as below:
 
-><pre>NAME      STATUS   ROLES           AGE     VERSION
->master    Ready    control-plane   2m36s   v1.24.2
->worker1   Ready    <none>          47s     v1.24.2
->worker2   Ready    <none>          47s     v1.24.2
-></pre>
+NAME      STATUS   ROLES           AGE     VERSION
+master1   Ready    control-plane   1h   v1.24.2
+master2   Ready    control-plane   1h   v1.24.2
+master3   Ready    control-plane   1h   v1.24.2
+worker1   Ready    <none>          1h   v1.24.2
+worker2   Ready    <none>          1h   v1.24.2
+worker3   Ready    <none>          1h   v1.24.2
+
 
 #### now we can deploy a project with k8s cluster.for example for nginx you can run these commands on master node:
 
