@@ -352,3 +352,77 @@ worker2 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192
 worker3 VM - OS = Ubuntu 20.04 - 2Core CPU - 2GB Memory - 20GB HDD - (eth0 : 192.168.1.106) - Hostname worker3)
 
 you can have any number of workers or masters at the begin of this state. ip addresses and dhcp config may be changed base on your situation.
+
+first of all install and configure DHCP on ha node.
+
+```sh
+apt-get install isc-dhcp-server
+nano /etc/dhcp/dhcpd.conf
+```
+you can see a sample of dhcp config in below:
+```sh
+default-lease-time 600;
+max-lease-time 7200;
+authoritative;
+subnet 192.168.1.0 netmask 255.255.255.0 {
+ range 192.168.1.101 192.168.1.201;
+ option routers 192.168.1.100;
+ option domain-name-servers 1.1.1.1, 8.8.8.8;
+#option domain-name "mydomain.example";
+host master1 {
+    hardware ethernet CE:16:1C:D4:8E:00;
+    fixed-address 192.168.1.101;
+}
+host master2 {
+    hardware ethernet 16:DB:D7:7E:6E:AF;
+    fixed-address 192.168.1.102;
+}
+host master3 {
+    hardware ethernet C2:E9:17:38:59:0D;
+    fixed-address 192.168.1.103;
+}
+host worker1 {
+    hardware ethernet 82:DB:1C:E4:A4:B5;
+    fixed-address 192.168.1.104;
+}
+}
+host worker2 {
+    hardware ethernet 06:3D:35:7D:B2:92;
+    fixed-address 192.168.1.105;
+}
+host worker3 {
+    hardware ethernet EA:AA:B3:D2:5D:47;
+    fixed-address 192.168.1.106;
+}
+}
+```
+we recommended you to fix mac and ip address in dhcp config file to prevent any misconfiguration in later.
+```sh
+service isc-dhcp-server restart
+```
+after that install and configure haproxy on ha node
+```sh
+apt-get install haproxy
+nano /etc/haproxy/haproxy.cfg
+```
+you can see a sample of dhcp config in below:
+```sh
+frontend kubernetes
+bind 192.168.1.100:6443
+option tcplog
+mode tcp
+default_backend kubernetes-master-nodes
+
+backend kubernetes-master-nodes
+mode tcp
+balance roundrobin
+option tcp-check
+server master1 192.168.1.101:6443 check fall 3 rise 2
+server master2 192.168.1.102:6443 check fall 3 rise 2
+server master3 192.168.1.103:6443 check fall 3 rise 2
+```
+after save configuration restart ha proxy service:
+```ssh
+service haproxy restart
+```
+
